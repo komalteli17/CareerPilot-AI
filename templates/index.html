@@ -1,0 +1,517 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareerPilot AI | Resume Analyzer</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc, #e0f2fe);
+            color: #172033;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            height: 72px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 7%;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #4f46e5;
+        }
+
+        .badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* HERO */
+
+        .hero {
+            text-align: center;
+            padding: 65px 20px 35px;
+        }
+
+        .hero h1 {
+            font-size: 46px;
+            line-height: 1.15;
+            font-weight: 800;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #0284c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 18px;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: auto;
+            color: #64748b;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* MAIN CARD */
+
+        .main {
+            width: min(850px, 92%);
+            margin: 20px auto 70px;
+        }
+
+        .upload-card {
+            background: rgba(255,255,255,0.92);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow:
+                0 20px 60px rgba(15,23,42,0.10);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .upload-area {
+            border: 2px dashed #818cf8;
+            border-radius: 20px;
+            padding: 45px 25px;
+            text-align: center;
+            background: #f8faff;
+            transition: 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+            background: #eef2ff;
+            font-size: 34px;
+        }
+
+        .upload-area h2 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            color: #64748b;
+            margin-bottom: 22px;
+        }
+
+        /* FILE INPUT */
+
+        .file-input {
+            display: none;
+        }
+
+        .choose-btn {
+            display: inline-block;
+            padding: 12px 22px;
+            background: white;
+            color: #4f46e5;
+            border: 1px solid #c7d2fe;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .choose-btn:hover {
+            background: #eef2ff;
+        }
+
+        #fileName {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        /* ANALYZE BUTTON */
+
+        .analyze-btn {
+            width: 100%;
+            margin-top: 25px;
+
+            padding: 16px;
+
+            border: none;
+            border-radius: 13px;
+
+            background: linear-gradient(
+                90deg,
+                #4f46e5,
+                #7c3aed
+            );
+
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 10px 25px rgba(79,70,229,0.25);
+
+            transition: 0.25s;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 14px 30px rgba(79,70,229,0.35);
+        }
+
+        .analyze-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 22px;
+        }
+
+        .feature {
+            background: white;
+            border-radius: 15px;
+            padding: 18px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .feature-icon {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .feature strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .feature span {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* LOADING */
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid #c7d2fe;
+            border-top-color: #4f46e5;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 700px) {
+
+            .hero {
+                padding-top: 45px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .upload-card {
+                padding: 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 0 5%;
+            }
+
+            .badge {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🚀 CareerPilot AI
+        </div>
+
+        <div class="badge">
+            ✨ AI-Powered Resume Analysis
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h1>
+            Build Your Career<br>
+            With AI
+        </h1>
+
+        <p>
+            Upload your resume and let CareerPilot AI analyze
+            your skills, experience, education and recommend
+            suitable career opportunities.
+        </p>
+
+    </section>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <div class="upload-card">
+
+            <form
+                action="/upload"
+                method="POST"
+                enctype="multipart/form-data"
+                onsubmit="showLoading()"
+            >
+
+                <div class="upload-area">
+
+                    <div class="upload-icon">
+                        📄
+                    </div>
+
+                    <h2>
+                        Upload Your Resume
+                    </h2>
+
+                    <p>
+                        Supported formats: PDF and DOCX
+                    </p>
+
+                    <label
+                        for="resume"
+                        class="choose-btn"
+                    >
+                        📁 Choose Resume
+                    </label>
+
+                    <input
+                        id="resume"
+                        class="file-input"
+                        type="file"
+                        name="resume"
+                        accept=".pdf,.docx"
+                        required
+                        onchange="showFileName()"
+                    >
+
+                    <div id="fileName">
+                        No file selected
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="analyze-btn"
+                >
+                    🤖 Analyze My Resume
+                </button>
+
+
+                <div
+                    id="loading"
+                    class="loading"
+                >
+                    <span class="spinner"></span>
+                    AI is analyzing your resume...
+                </div>
+
+            </form>
+
+
+            <!-- FEATURES -->
+
+            <div class="features">
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        📄
+                    </div>
+
+                    <strong>
+                        Resume Parsing
+                    </strong>
+
+                    <span>
+                        Extract important resume information
+                    </span>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        🤖
+                    </div>
+
+                    <strong>
+                        AI Analysis
+                    </strong>
+
+                    <span>
+                        Analyze skills and experience
+                    </span>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        🎯
+                    </div>
+
+                    <strong>
+                        Career Suggestions
+                    </strong>
+
+                    <span>
+                        Discover suitable job roles
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        © 2026 CareerPilot AI · AI-Powered Career Assistant
+
+    </footer>
+
+
+    <script>
+
+        function showFileName() {
+
+            const input =
+                document.getElementById("resume");
+
+            const fileName =
+                document.getElementById("fileName");
+
+            if (input.files.length > 0) {
+
+                fileName.innerHTML =
+                    "📎 " + input.files[0].name;
+
+            } else {
+
+                fileName.innerHTML =
+                    "No file selected";
+
+            }
+
+        }
+
+
+        function showLoading() {
+
+            document.getElementById("loading").style.display =
+                "block";
+
+        }
+
+    </script>
+
+</body>
+</html>
+```
